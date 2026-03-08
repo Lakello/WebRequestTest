@@ -11,6 +11,8 @@ namespace _SOURCE_.Scripts.Features.Clicker.Runtime.Views
 		[SerializeField] private TMP_Text _balanceText;
 		[SerializeField] private TMP_Text _energyText;
 
+		public RectTransform ClickButtonRect => (RectTransform)_clickButton.transform;
+
 		private readonly Subject<Unit> _clicks = new();
 		public Observable<Unit> Clicks => _clicks;
 
