@@ -22,6 +22,7 @@ namespace _SOURCE_.Scripts
 			Container.Bind<TabsView>().FromInstance(_tabsView).AsSingle();
 
 			Container.Bind<IWallet>().To<Wallet>().AsSingle().NonLazy();
+			Container.BindInterfacesTo<AutoCurrencyCollector>().AsSingle().NonLazy();
 			
 			BindTab(TabId.Clicker, _clickerPrefab);
 			BindTab(TabId.Weather, _weatherPrefab);
