@@ -17,6 +17,7 @@ namespace Features.Tabs.Runtime.Installers
 
 	public sealed class TabsInstaller : MonoInstaller
 	{
+		[SerializeField] private AudioSource _audioSource;
 		[SerializeField] private ClickerTabConfig _clickerTabConfig;
 		[SerializeField] private TabsView _tabsView;
 
@@ -31,7 +32,9 @@ namespace Features.Tabs.Runtime.Installers
 		public override void InstallBindings()
 		{
 			Container.BindInterfacesAndSelfTo<RequestQueue>().AsSingle().NonLazy();
-			
+
+			Container.BindInstance(_audioSource).AsSingle();
+
 			Container.BindInstance(_clickerTabConfig).AsSingle();
 			Container.Bind<TabsView>().FromInstance(_tabsView).AsSingle();
 
