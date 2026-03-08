@@ -1,5 +1,6 @@
-namespace _SOURCE_.Scripts
+namespace Features.Tabs.Runtime.Pooling
 {
+	using Views;
 	using Zenject;
 
 	public sealed class TabViewPool : MonoMemoryPool<TabPrefabRoot>

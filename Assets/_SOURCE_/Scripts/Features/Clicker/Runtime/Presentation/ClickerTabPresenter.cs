@@ -1,4 +1,4 @@
-namespace _SOURCE_.Scripts.Features.Clicker.Runtime.Presentation
+namespace Features.Clicker.Runtime.Presentation
 {
 	using System;
 	using Common.Runtime.Clicker;
@@ -35,8 +35,9 @@ namespace _SOURCE_.Scripts.Features.Clicker.Runtime.Presentation
 			_view.SetEnergy(_energy.Current.CurrentValue, _energy.Max);
 
 			// manual tap request
-			_view.Clicks
-				.Subscribe(_ => _tapBus.RequestTap(new ClickerTapRequest(ClickerTapSource.Manual)))
+			_view.TapWorldPositions
+				.Subscribe(worldPos =>
+					_tapBus.RequestTap(new ClickerTapRequest(ClickerTapSource.Manual, worldPos)))
 				.AddTo(_d);
 
 			// balance -> UI

@@ -1,4 +1,4 @@
-namespace _SOURCE_.Scripts.Features.Clicker.Runtime.Views
+namespace Features.Clicker.Runtime.Views
 {
 	using R3;
 	using TMPro;
@@ -8,32 +8,18 @@ namespace _SOURCE_.Scripts.Features.Clicker.Runtime.Views
 	public sealed class ClickerTabView : MonoBehaviour
 	{
 		[SerializeField] private Button _clickButton;
+		[SerializeField] private ClickerTapInput _tapInput;
+		[SerializeField] private RectTransform _coinsTarget;
+
 		[SerializeField] private TMP_Text _balanceText;
 		[SerializeField] private TMP_Text _energyText;
 
 		public RectTransform ClickButtonRect => (RectTransform)_clickButton.transform;
+		public RectTransform CoinsTargetRect => _coinsTarget;
 
-		private readonly Subject<Unit> _clicks = new();
-		public Observable<Unit> Clicks => _clicks;
+		public Observable<Vector3> TapWorldPositions => _tapInput.TapWorldPositions;
 
-		private void Awake()
-		{
-			_clickButton.onClick.AddListener(() => _clicks.OnNext(Unit.Default));
-		}
-
-		public void SetBalance(long value)
-		{
-			_balanceText.text = value.ToString();
-		}
-
-		public void SetEnergy(int current, int max)
-		{
-			_energyText.text = $"{current}/{max}";
-		}
-
-		private void OnDestroy()
-		{
-			_clicks.Dispose();
-		}
+		public void SetBalance(long value) => _balanceText.text = value.ToString();
+		public void SetEnergy(int current, int max) => _energyText.text = $"{current}/{max}";
 	}
 }

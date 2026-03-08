@@ -1,4 +1,4 @@
-namespace _SOURCE_.Scripts.Common.Runtime.Energy
+namespace Common.Runtime.Energy
 {
 	using System;
 	using System.Threading;

@@ -1,9 +1,12 @@
-namespace _SOURCE_.Scripts
+namespace Features.Tabs.Runtime.States
 {
 	using System.Threading;
+	using Common.Runtime.Navigation;
 	using Cysharp.Threading.Tasks;
 	using DG.Tweening;
+	using Pooling;
 	using UnityEngine;
+	using Views;
 
 	public sealed class PooledPrefabTabState : ITabState
 	{

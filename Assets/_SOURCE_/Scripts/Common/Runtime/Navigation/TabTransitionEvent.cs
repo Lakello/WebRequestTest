@@ -1,4 +1,4 @@
-namespace _SOURCE_.Scripts
+namespace Common.Runtime.Navigation
 {
 	public readonly struct TabTransitionEvent
 	{

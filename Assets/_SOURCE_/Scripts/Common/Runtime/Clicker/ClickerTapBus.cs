@@ -1,4 +1,4 @@
-namespace _SOURCE_.Scripts.Common.Runtime.Clicker
+namespace Common.Runtime.Clicker
 {
 	using System;
 	using R3;

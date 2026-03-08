@@ -1,4 +1,4 @@
-namespace _SOURCE_.Scripts.Common.Runtime.Currency
+namespace Common.Runtime.Currency
 {
 	using System;
 	using R3;

@@ -1,21 +1,22 @@
-namespace _SOURCE_.Scripts.Common.Runtime.Currency
+namespace Common.Runtime.Clicker
 {
 	using System;
 	using System.Threading;
-	using Clicker;
 	using Cysharp.Threading.Tasks;
 	using Zenject;
 
 	public sealed class AutoTapGenerator : IInitializable, IDisposable
 	{
 		private readonly IClickerTapBus _bus;
+		private readonly IClickerTapPointProvider _pointProvider;
 
 		private CancellationTokenSource _cts;
 		private readonly TimeSpan _interval = TimeSpan.FromSeconds(3);
 
-		public AutoTapGenerator(IClickerTapBus bus)
+		public AutoTapGenerator(IClickerTapBus bus, IClickerTapPointProvider pointProvider)
 		{
 			_bus = bus;
+			_pointProvider = pointProvider;
 		}
 
 		public void Initialize()
@@ -31,7 +32,8 @@ namespace _SOURCE_.Scripts.Common.Runtime.Currency
 				await UniTask.Delay(_interval, cancellationToken: ct);
 				if (ct.IsCancellationRequested) break;
 
-				_bus.RequestTap(new ClickerTapRequest(ClickerTapSource.Auto));
+				var hasPoint = _pointProvider.TryGetRandomPointInClickButton(out var worldPos);
+				_bus.RequestTap(new ClickerTapRequest(ClickerTapSource.Auto, hasPoint ? worldPos : default));
 			}
 		}
 

@@ -1,5 +1,6 @@
-namespace _SOURCE_.Scripts
+namespace Features.Tabs.Runtime.Views
 {
+	using Common.Runtime.Navigation;
 	using R3;
 	using UnityEngine;
 	using UnityEngine.UI;

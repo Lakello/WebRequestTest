@@ -1,4 +1,4 @@
-namespace _SOURCE_.Scripts.Common.Runtime.Clicker
+namespace Common.Runtime.Clicker
 {
 	using System;
 	using Currency;
@@ -29,13 +29,11 @@ namespace _SOURCE_.Scripts.Common.Runtime.Clicker
 			_bus.TapRequested
 				.Subscribe(req =>
 				{
-					// единая стоимость клика
 					if (_energy.TrySpend(1))
 					{
 						_wallet.Add(1);
-						_performed.OnNext(new ClickerTapPerformed(req.Source));
+						_performed.OnNext(new ClickerTapPerformed(req.Source, req.WorldPos));
 					}
-					// иначе: энергии нет -> ничего не делаем (позже можно emit "failed tap")
 				})
 				.AddTo(_d);
 		}

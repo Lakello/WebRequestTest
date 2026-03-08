@@ -1,4 +1,4 @@
-namespace _SOURCE_.Scripts.Features.Clicker.Runtime.Installers
+namespace Features.Clicker.Runtime.Installers
 {
 	using Presentation;
 	using UnityEngine;
@@ -8,25 +8,48 @@ namespace _SOURCE_.Scripts.Features.Clicker.Runtime.Installers
 
 	public sealed class ClickerTabInstaller : MonoInstaller
 	{
-		[Header("VFX")]
-		[SerializeField] private ClickerTapParticleFx _tapParticlePrefab;
+		[Header("VFX Root")]
 		[SerializeField] private Transform _vfxRoot;
+
+		[Header("Tap Particle (start)")]
+		[SerializeField] private ClickerTapParticleFx _tapParticlePrefab;
+
+		[Header("Impact Particle (end)")]
+		[SerializeField] private ClickerTapParticleFx _impactParticlePrefab;
+
+		[Header("Coin Fly")]
+		[SerializeField] private CoinFlyFx _coinPrefab;
+		[SerializeField] private ClickerCoinFlySettings _coinFlySettings = new();
 
 		public override void InstallBindings()
 		{
 			Container.Bind<ClickerTabView>().FromComponentInHierarchy().AsSingle();
 
-			// Presenter
 			Container.BindInterfacesAndSelfTo<ClickerTabPresenter>().AsSingle().NonLazy();
 
-			// VFX pool (живет в рамках префаба вкладки)
-			Container.BindMemoryPool<ClickerTapParticleFx, ClickerTapParticleFxPool>()
+			// settings
+			Container.BindInstance(_coinFlySettings).AsSingle();
+
+			// particles pools
+			Container.BindMemoryPool<ClickerTapParticleFx, TapParticlePool>()
 				.WithInitialSize(0)
 				.FromComponentInNewPrefab(_tapParticlePrefab)
 				.UnderTransform(_vfxRoot);
 
-			// Spawner (подписывается на TapPerformed)
+			Container.BindMemoryPool<ClickerTapParticleFx, ImpactParticlePool>()
+				.WithInitialSize(0)
+				.FromComponentInNewPrefab(_impactParticlePrefab)
+				.UnderTransform(_vfxRoot);
+
+			// coin pool
+			Container.BindMemoryPool<CoinFlyFx, CoinFlyFxPool>()
+				.WithInitialSize(0)
+				.FromComponentInNewPrefab(_coinPrefab)
+				.UnderTransform(_vfxRoot);
+
+			// spawners
 			Container.BindInterfacesAndSelfTo<ClickerTapVfxSpawner>().AsSingle().NonLazy();
+			Container.BindInterfacesAndSelfTo<ClickerCoinFlySpawner>().AsSingle().NonLazy();
 		}
 	}
 }

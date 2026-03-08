@@ -1,4 +1,4 @@
-namespace _SOURCE_.Scripts
+namespace Features.Tabs.Runtime.Views
 {
 	using UnityEngine;
 

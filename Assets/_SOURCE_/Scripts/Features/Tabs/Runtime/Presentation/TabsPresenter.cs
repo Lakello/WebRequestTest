@@ -1,12 +1,14 @@
-namespace _SOURCE_.Scripts
+namespace Features.Tabs.Runtime.Presentation
 {
-	using System;
-using System.Collections.Generic;
-using System.Threading;
-using Cysharp.Threading.Tasks;
-using R3;
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using Common.Runtime.Navigation;
+    using Cysharp.Threading.Tasks;
+    using R3;
+    using Views;
 
-public sealed class TabsPresenter : IDisposable, ITabsNavigation, ITabActivityRegistry, ITabTransitions
+    public sealed class TabsPresenter : IDisposable, ITabsNavigation, ITabActivityRegistry, ITabTransitions
 {
     private readonly TabsView _view;
     private readonly Dictionary<TabId, ITabState> _states;

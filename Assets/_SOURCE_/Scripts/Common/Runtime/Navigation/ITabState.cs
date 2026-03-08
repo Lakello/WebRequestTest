@@ -1,7 +1,7 @@
-namespace _SOURCE_.Scripts
+namespace Common.Runtime.Navigation
 {
-	using Cysharp.Threading.Tasks;
 	using System.Threading;
+	using Cysharp.Threading.Tasks;
 
 	public interface ITabState
 	{

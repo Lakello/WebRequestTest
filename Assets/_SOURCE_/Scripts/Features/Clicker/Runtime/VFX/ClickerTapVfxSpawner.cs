@@ -1,54 +1,41 @@
-namespace _SOURCE_.Scripts.Features.Clicker.Runtime.VFX
+namespace Features.Clicker.Runtime.VFX
 {
 	using System;
 	using Common.Runtime.Clicker;
 	using Cysharp.Threading.Tasks;
 	using R3;
-	using Views;
+	using UnityEngine;
 
 	public sealed class ClickerTapVfxSpawner : IDisposable
 	{
-		private readonly ClickerTabView _view;
-		private readonly ClickerTapParticleFxPool _pool;
+		private readonly TapParticlePool _pool;
 		private readonly IClickerTapFeedback _feedback;
-
 		private readonly CompositeDisposable _d = new();
 
 		public ClickerTapVfxSpawner(
-			ClickerTabView view,
-			ClickerTapParticleFxPool pool,
+			TapParticlePool pool,
 			IClickerTapFeedback feedback)
 		{
-			_view = view;
 			_pool = pool;
 			_feedback = feedback;
 
-			// Эффект только на реально выполненный тап (энергия списалась, валюта начислилась)
 			_feedback.TapPerformed
-				.Subscribe(_ => SpawnAtButtonCenter().Forget())
+				.Subscribe(performed => Spawn(performed.WorldPos).Forget())
 				.AddTo(_d);
 		}
 
-		private async UniTaskVoid SpawnAtButtonCenter()
+		private async UniTaskVoid Spawn(Vector3 worldPos)
 		{
 			var fx = _pool.Spawn();
-
-			// UI world-position центра кнопки
-			fx.transform.position = _view.ClickButtonRect.position;
-
+			fx.transform.position = worldPos;
 			fx.Play();
 
-			// Через длительность вернуть в пул
-			var ms = (int)(fx.DurationSeconds * 1000f);
-			if (ms < 50) ms = 50;
-
+			var ms = Mathf.Max(50, (int)(fx.DurationSeconds * 1000f));
 			await UniTask.Delay(ms);
+
 			_pool.Despawn(fx);
 		}
 
-		public void Dispose()
-		{
-			_d.Dispose();
-		}
+		public void Dispose() => _d.Dispose();
 	}
 }

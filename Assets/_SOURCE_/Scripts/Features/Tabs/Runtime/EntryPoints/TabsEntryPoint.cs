@@ -1,6 +1,8 @@
-namespace _SOURCE_.Scripts
+namespace Features.Tabs.Runtime.EntryPoints
 {
+	using Common.Runtime.Navigation;
 	using Cysharp.Threading.Tasks;
+	using Presentation;
 	using Zenject;
 
 	public sealed class TabsEntryPoint : IInitializable

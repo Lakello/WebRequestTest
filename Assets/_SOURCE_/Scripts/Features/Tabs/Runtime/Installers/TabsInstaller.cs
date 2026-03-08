@@ -1,10 +1,16 @@
-namespace _SOURCE_.Scripts
+namespace Features.Tabs.Runtime.Installers
 {
 	using System.Collections.Generic;
 	using Common.Runtime.Clicker;
 	using Common.Runtime.Currency;
 	using Common.Runtime.Energy;
+	using Common.Runtime.Navigation;
+	using EntryPoints;
+	using Pooling;
+	using Presentation;
+	using States;
 	using UnityEngine;
+	using Views;
 	using Zenject;
 
 	public sealed class TabsInstaller : MonoInstaller
@@ -50,6 +56,8 @@ namespace _SOURCE_.Scripts
 
 			Container.BindInterfacesAndSelfTo<TabsPresenter>().AsSingle();
 			Container.BindInterfacesAndSelfTo<TabsEntryPoint>().AsSingle();
+			
+			Container.BindInterfacesAndSelfTo<ClickerTapPointProvider>().AsSingle();
 		}
 
 		private void BindTab(TabId id, TabPrefabRoot prefab)
