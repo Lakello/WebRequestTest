@@ -13,21 +13,16 @@ namespace Features.Tabs.Runtime.Presentation
 		private readonly TabsView _view;
 		private readonly Dictionary<TabId, ITabState> _states;
 
+		private readonly Subject<TabTransitionEvent> _tabChanging = new();
+		private readonly Subject<TabTransitionEvent> _tabChanged = new();
+
+		private readonly Dictionary<TabId, ReactiveProperty<bool>> _isActive = new();
+		private readonly CompositeDisposable _disposables = new();
+
 		private ITabState _current;
 
 		private CancellationTokenSource _transitionCts;
 		private bool _isTransitioning;
-
-		public TabId Current => _current?.Id ?? default;
-		public TabId? TransitionTarget { get; private set; }
-
-		private readonly Subject<TabTransitionEvent> _tabChanging = new();
-		private readonly Subject<TabTransitionEvent> _tabChanged = new();
-		public Observable<TabTransitionEvent> TabChanging => _tabChanging;
-		public Observable<TabTransitionEvent> TabChanged => _tabChanged;
-
-		private readonly Dictionary<TabId, ReactiveProperty<bool>> _isActive = new();
-		private readonly CompositeDisposable _disposables = new();
 
 		public TabsPresenter(TabsView view, IReadOnlyList<ITabState> states)
 		{
@@ -45,10 +40,18 @@ namespace Features.Tabs.Runtime.Presentation
 				.AddTo(_disposables);
 		}
 
+		public TabId Current => _current?.Id ?? default;
+		public TabId? TransitionTarget { get; private set; }
+
+		public Observable<TabTransitionEvent> TabChanging => _tabChanging;
+		public Observable<TabTransitionEvent> TabChanged => _tabChanged;
+
 		public ReadOnlyReactiveProperty<bool> IsActive(TabId tabId)
 		{
 			if (!_isActive.TryGetValue(tabId, out var rp))
+			{
 				throw new InvalidOperationException($"Unknown tabId: {tabId}");
+			}
 			return rp;
 		}
 
@@ -60,17 +63,20 @@ namespace Features.Tabs.Runtime.Presentation
 
 		public UniTask SwitchToAsync(TabId tabId)
 		{
-			// active -> noop
 			if (_current != null && _current.Id == tabId)
+			{
 				return UniTask.CompletedTask;
+			}
 
-			// already transitioning to this tab -> noop
 			if (_isTransitioning && TransitionTarget.HasValue && TransitionTarget.Value == tabId)
+			{
 				return UniTask.CompletedTask;
+			}
 
-			// transitioning to another -> cancel previous and start new
 			if (_isTransitioning)
+			{
 				_transitionCts?.Cancel();
+			}
 
 			return RunTransitionAsync(tabId);
 		}
@@ -78,7 +84,9 @@ namespace Features.Tabs.Runtime.Presentation
 		private async UniTask RunTransitionAsync(TabId target)
 		{
 			if (!_states.TryGetValue(target, out var next))
+			{
 				throw new InvalidOperationException($"No state registered for tab {target}");
+			}
 
 			_isTransitioning = true;
 			TransitionTarget = target;
@@ -104,10 +112,7 @@ namespace Features.Tabs.Runtime.Presentation
 
 				_tabChanged.OnNext(new TabTransitionEvent(fromId, target));
 			}
-			catch (OperationCanceledException)
-			{
-				// interrupted by new tab request
-			}
+			catch (OperationCanceledException) { }
 			finally
 			{
 				_isTransitioning = false;
@@ -121,7 +126,9 @@ namespace Features.Tabs.Runtime.Presentation
 			_transitionCts?.Dispose();
 
 			foreach (var kv in _isActive)
+			{
 				kv.Value.Dispose();
+			}
 
 			_tabChanging.Dispose();
 			_tabChanged.Dispose();

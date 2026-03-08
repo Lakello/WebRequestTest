@@ -18,19 +18,27 @@ namespace Features.Facts.Runtime.Networking
 
 			var root = JObject.Parse(json);
 			var data = root["data"] as JArray;
-			if (data == null) throw new Exception("Dog API: data is missing");
+			if (data == null)
+			{
+				throw new Exception("Dog API: data is missing");
+			}
 
 			var list = new List<DogBreedListItemDto>(data.Count);
 			foreach (var token in data)
 			{
 				var obj = token as JObject;
-				if (obj == null) continue;
+				if (obj == null)
+				{
+					continue;
+				}
 
 				var id = obj.Value<string>("id");
 				var name = obj["attributes"]?.Value<string>("name");
 
 				if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(name))
+				{
 					continue;
+				}
 
 				list.Add(new DogBreedListItemDto(id, name));
 			}
@@ -41,20 +49,24 @@ namespace Features.Facts.Runtime.Networking
 		public async UniTask<DogBreedDetailsDto> FetchBreedDetailsAsync(string breedId, CancellationToken ct)
 		{
 			if (string.IsNullOrWhiteSpace(breedId))
+			{
 				throw new ArgumentOutOfRangeException(nameof(breedId));
+			}
 
 			var url = $"{BaseUrl}/breeds/{breedId}";
 			var json = await GetTextAsync(url, ct);
 
 			var root = JObject.Parse(json);
 			var data = root["data"] as JObject;
-			if (data == null) throw new Exception("Dog API: data is missing");
+			if (data == null)
+			{
+				throw new Exception("Dog API: data is missing");
+			}
 
 			var id = data.Value<string>("id");
 			var attrs = data["attributes"] as JObject;
 
 			var name = attrs?.Value<string>("name") ?? "Unknown";
-			// У dogapi.dog поле обычно "description"
 			var description = attrs?.Value<string>("description") ?? "No description";
 
 			return new DogBreedDetailsDto(id ?? breedId, name, description);
@@ -68,7 +80,9 @@ namespace Features.Facts.Runtime.Networking
 			await req.SendWebRequest().ToUniTask(cancellationToken: ct);
 
 			if (req.result != UnityWebRequest.Result.Success)
+			{
 				throw new Exception($"GET {url} failed: {req.responseCode} {req.error}");
+			}
 
 			return req.downloadHandler.text;
 		}

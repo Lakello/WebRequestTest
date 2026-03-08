@@ -19,19 +19,34 @@ namespace Features.Facts.Runtime.Views
 
 		public void ShowLoading()
 		{
-			if (_loadingRoot != null) _loadingRoot.SetActive(true);
-			if (_listRoot != null) _listRoot.SetActive(false);
+			if (_loadingRoot != null)
+			{
+				_loadingRoot.SetActive(true);
+			}
+			if (_listRoot != null)
+			{
+				_listRoot.SetActive(false);
+			}
 		}
 
 		public void ShowList()
 		{
-			if (_loadingRoot != null) _loadingRoot.SetActive(false);
-			if (_listRoot != null) _listRoot.SetActive(true);
+			if (_loadingRoot != null)
+			{
+				_loadingRoot.SetActive(false);
+			}
+			if (_listRoot != null)
+			{
+				_listRoot.SetActive(true);
+			}
 		}
 
 		public void HideAllIndicators()
 		{
-			if (_loadingRoot != null) _loadingRoot.SetActive(false);
+			if (_loadingRoot != null)
+			{
+				_loadingRoot.SetActive(false);
+			}
 		}
 	}
 }

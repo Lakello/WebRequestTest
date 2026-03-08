@@ -15,11 +15,12 @@ namespace Features.Weather.Runtime.Networking
 		{
 			var json = await GetTextAsync(ForecastUrl, ct);
 
-			// periods[0] обычно "Today"
 			var root = JObject.Parse(json);
 			var periods = root["properties"]?["periods"] as JArray;
 			if (periods == null || periods.Count == 0)
+			{
 				throw new Exception("Weather API: properties.periods is empty");
+			}
 
 			var p0 = (JObject)periods[0];
 
@@ -28,17 +29,23 @@ namespace Features.Weather.Runtime.Networking
 			var iconUrl = p0.Value<string>("icon");
 
 			if (!temp.HasValue)
+			{
 				throw new Exception("Weather API: temperature not found");
+			}
 
 			// icon can be null/empty иногда
 			Sprite sprite = null;
 			if (!string.IsNullOrWhiteSpace(iconUrl))
+			{
 				sprite = await GetIconSpriteAsync(iconUrl, ct);
+			}
 
 			return new WeatherTodayDto(
 				title: "Сегодня",
 				temperature: temp.Value,
-				temperatureUnit: string.IsNullOrWhiteSpace(unit) ? "F" : unit,
+				temperatureUnit: string.IsNullOrWhiteSpace(unit)
+					? "F"
+					: unit,
 				icon: sprite
 			);
 		}
@@ -51,7 +58,9 @@ namespace Features.Weather.Runtime.Networking
 			await req.SendWebRequest().ToUniTask(cancellationToken: ct);
 
 			if (req.result != UnityWebRequest.Result.Success)
+			{
 				throw new Exception($"GET {url} failed: {req.responseCode} {req.error}");
+			}
 
 			return req.downloadHandler.text;
 		}
@@ -62,10 +71,15 @@ namespace Features.Weather.Runtime.Networking
 			await req.SendWebRequest().ToUniTask(cancellationToken: ct);
 
 			if (req.result != UnityWebRequest.Result.Success)
+			{
 				throw new Exception($"GET icon {url} failed: {req.responseCode} {req.error}");
+			}
 
 			var tex = DownloadHandlerTexture.GetContent(req);
-			if (tex == null) return null;
+			if (tex == null)
+			{
+				return null;
+			}
 
 			var rect = new Rect(0, 0, tex.width, tex.height);
 			return Sprite.Create(tex, rect, new Vector2(0.5f, 0.5f), pixelsPerUnit: 100f);

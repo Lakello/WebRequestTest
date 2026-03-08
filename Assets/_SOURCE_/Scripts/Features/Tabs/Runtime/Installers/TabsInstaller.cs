@@ -40,7 +40,6 @@ namespace Features.Tabs.Runtime.Installers
 
 			Container.Bind<IWallet>().To<Wallet>().AsSingle().NonLazy();
 
-			// Energy (max=1000, start=max)
 			Container.Bind<IEnergy>()
 				.FromMethod(ctx =>
 				{
@@ -51,18 +50,14 @@ namespace Features.Tabs.Runtime.Installers
 				.NonLazy();
 			Container.BindInterfacesTo<EnergyRegenerator>().AsSingle().NonLazy();
 
-// Click bus + processor
 			Container.Bind<IClickerTapBus>().To<ClickerTapBus>().AsSingle().NonLazy();
-			Container.BindInterfacesAndSelfTo<ClickerTapProcessor>().AsSingle().NonLazy(); // даёт IClickerTapFeedback тоже
-
-// Auto taps
+			Container.BindInterfacesAndSelfTo<ClickerTapProcessor>().AsSingle().NonLazy();
 			Container.BindInterfacesTo<AutoTapGenerator>().AsSingle().NonLazy();
 
 			BindTab(TabId.Clicker, _clickerPrefab);
 			BindTab(TabId.Weather, _weatherPrefab);
 			BindTab(TabId.Facts, _factsPrefab);
 
-			// Собираем states явно (иначе states по WithId не попадут сами в IEnumerable)
 			Container.Bind<IReadOnlyList<ITabState>>().FromMethod(ctx => new ITabState[]
 			{
 				ctx.Container.ResolveId<ITabState>(TabId.Clicker),
@@ -78,14 +73,12 @@ namespace Features.Tabs.Runtime.Installers
 
 		private void BindTab(TabId id, TabPrefabRoot prefab)
 		{
-			// Pool per tab
 			Container.BindMemoryPool<TabPrefabRoot, TabViewPool>()
 				.WithId(id)
 				.WithInitialSize(0)
 				.FromComponentInNewPrefab(prefab)
 				.UnderTransform(_tabsContainer);
 
-			// State per tab
 			Container.Bind<ITabState>()
 				.WithId(id)
 				.FromMethod(ctx =>

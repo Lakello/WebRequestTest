@@ -31,7 +31,6 @@ namespace Common.Runtime.Energy
 			{
 				var seconds = _config.EnergyRegenIntervalSeconds;
 
-				// если 0 — выключаем реген, чтобы не уйти в спам-цикл
 				if (seconds <= 0f || _config.EnergyRegenAmount <= 0)
 				{
 					await UniTask.Delay(TimeSpan.FromSeconds(0.25f), cancellationToken: ct);

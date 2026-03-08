@@ -9,10 +9,9 @@ namespace Common.Runtime.Networking
 	public sealed class RequestQueue : IInitializable, IDisposable, IRequestQueue
 	{
 		private readonly object _gate = new();
-
 		private readonly Queue<IRequestItem> _queue = new();
-		private CancellationTokenSource _workerCts;
 
+		private CancellationTokenSource _workerCts;
 		private IRequestItem _current;
 
 		public void Initialize()
@@ -23,8 +22,14 @@ namespace Common.Runtime.Networking
 
 		public UniTask<T> Enqueue<T>(Func<CancellationToken, UniTask<T>> operation, object ownerTag)
 		{
-			if (operation == null) throw new ArgumentNullException(nameof(operation));
-			if (ownerTag == null) throw new ArgumentNullException(nameof(ownerTag));
+			if (operation == null)
+			{
+				throw new ArgumentNullException(nameof(operation));
+			}
+			if (ownerTag == null)
+			{
+				throw new ArgumentNullException(nameof(ownerTag));
+			}
 
 			var item = new RequestItem<T>(operation, ownerTag);
 
@@ -38,16 +43,22 @@ namespace Common.Runtime.Networking
 
 		public void CancelOwner(object ownerTag)
 		{
-			if (ownerTag == null) return;
+			if (ownerTag == null)
+			{
+				return;
+			}
 
 			lock (_gate)
 			{
-				// cancel current (if matches)
 				if (_current != null && ReferenceEquals(_current.OwnerTag, ownerTag))
+				{
 					_current.Cancel();
+				}
 
-				// rebuild queue without matching items
-				if (_queue.Count == 0) return;
+				if (_queue.Count == 0)
+				{
+					return;
+				}
 
 				var tmp = new Queue<IRequestItem>(_queue.Count);
 				while (_queue.Count > 0)
@@ -55,7 +66,7 @@ namespace Common.Runtime.Networking
 					var it = _queue.Dequeue();
 					if (ReferenceEquals(it.OwnerTag, ownerTag))
 					{
-						it.Cancel(); // ensures its task completes as canceled
+						it.Cancel();
 						continue;
 					}
 
@@ -63,7 +74,9 @@ namespace Common.Runtime.Networking
 				}
 
 				while (tmp.Count > 0)
+				{
 					_queue.Enqueue(tmp.Dequeue());
+				}
 			}
 		}
 
@@ -97,7 +110,9 @@ namespace Common.Runtime.Networking
 					lock (_gate)
 					{
 						if (ReferenceEquals(_current, next))
+						{
 							_current = null;
+						}
 					}
 				}
 			}
@@ -115,14 +130,18 @@ namespace Common.Runtime.Networking
 				_current = null;
 
 				while (_queue.Count > 0)
+				{
 					_queue.Dequeue().Cancel();
+				}
 			}
 		}
 
 		private interface IRequestItem
 		{
 			object OwnerTag { get; }
+
 			void Cancel();
+
 			UniTask ExecuteAsync(CancellationToken workerCt);
 		}
 
@@ -145,11 +164,14 @@ namespace Common.Runtime.Networking
 			public void Cancel()
 			{
 				if (!_itemCts.IsCancellationRequested)
+				{
 					_itemCts.Cancel();
+				}
 
-				// if it wasn't executed yet, we must complete task as canceled
 				if (!_tcs.Task.Status.IsCompleted())
+				{
 					_tcs.TrySetCanceled(_itemCts.Token);
+				}
 			}
 
 			public async UniTask ExecuteAsync(CancellationToken workerCt)

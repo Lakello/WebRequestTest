@@ -4,11 +4,11 @@ namespace Features.Weather.Runtime.Presentation
 	using System.Threading;
 	using Common.Runtime.Navigation;
 	using Common.Runtime.Networking;
+	using Config;
 	using Cysharp.Threading.Tasks;
-	using Features.Weather.Runtime.Config;
-	using Features.Weather.Runtime.Networking;
-	using Features.Weather.Runtime.Views;
+	using Networking;
 	using R3;
+	using Views;
 
 	public sealed class WeatherTabPresenter : IDisposable
 	{
@@ -42,8 +42,14 @@ namespace Features.Weather.Runtime.Presentation
 			_tabs.IsActive(TabId.Weather)
 				.Subscribe(isActive =>
 				{
-					if (isActive) StartLoop();
-					else StopLoop();
+					if (isActive)
+					{
+						StartLoop();
+					}
+					else
+					{
+						StopLoop();
+					}
 				})
 				.AddTo(_d);
 		}
@@ -62,11 +68,8 @@ namespace Features.Weather.Runtime.Presentation
 			_loopCts?.Dispose();
 			_loopCts = null;
 
-			// Требование: отменить текущий и удалить ожидающие запросы этого владельца
 			_queue.CancelOwner(this);
 
-			// При уходе — просто выключаем индикаторы обновления.
-			// WeatherRoot/LoadingRoot не трогаем (можно оставить последнее состояние).
 			_view.SetUpdating(false);
 		}
 
@@ -78,13 +81,11 @@ namespace Features.Weather.Runtime.Presentation
 				{
 					if (_hasLoadedOnce)
 					{
-						// обновление: показываем спиннер, данные остаются видимыми
 						_view.ShowWeather();
 						_view.SetUpdating(true);
 					}
 					else
 					{
-						// первая загрузка: скрываем данные и показываем LoadingRoot
 						_view.ShowLoading();
 					}
 
@@ -98,15 +99,12 @@ namespace Features.Weather.Runtime.Presentation
 				}
 				catch (OperationCanceledException)
 				{
-					// При отмене просто убираем updating, loading можно не трогать
 					_view.SetUpdating(false);
 				}
 				catch (Exception)
 				{
 					_view.SetUpdating(false);
 
-					// Если данных ещё не было — можно показывать LoadingRoot или ошибку.
-					// Я показываю ошибку в WeatherRoot, чтобы было явно.
 					_view.SetError("Ошибка загрузки погоды");
 				}
 

@@ -6,10 +6,10 @@ namespace Features.Facts.Runtime.Presentation
 	using Common.Runtime.Navigation;
 	using Common.Runtime.Networking;
 	using Cysharp.Threading.Tasks;
-	using Features.Facts.Runtime.Networking;
-	using Features.Facts.Runtime.Pooling;
-	using Features.Facts.Runtime.Views;
+	using Networking;
+	using Pooling;
 	using R3;
+	using Views;
 
 	public sealed class FactsTabPresenter : IDisposable
 	{
@@ -24,14 +24,14 @@ namespace Features.Facts.Runtime.Presentation
 		private readonly CompositeDisposable _d = new();
 
 		private readonly object _breedsOwnerTag;
-		private object _detailsOwnerTag;
 
 		private readonly List<IDisposable> _itemSubscriptions = new();
 		private readonly List<DogBreedItemView> _spawnedItems = new();
 
 		private CancellationTokenSource _activeCts;
+		private DogBreedItemView _loadingItem;
 
-		private DogBreedItemView _loadingItem; // у какого item сейчас показываем спиннер
+		private object _detailsOwnerTag;
 
 		public FactsTabPresenter(
 			FactsTabView view,
@@ -52,15 +52,21 @@ namespace Features.Facts.Runtime.Presentation
 			_tabs.IsActive(TabId.Facts)
 				.Subscribe(isActive =>
 				{
-					if (isActive) OnEnter();
-					else OnExit();
+					if (isActive)
+					{
+						OnEnter();
+					}
+					else
+					{
+						OnExit();
+					}
 				})
 				.AddTo(_d);
 		}
 
 		private void OnEnter()
 		{
-			OnExit(); // safety
+			OnExit();
 
 			_activeCts = new CancellationTokenSource();
 			LoadBreedsAsync(_activeCts.Token).Forget();
@@ -97,10 +103,7 @@ namespace Features.Facts.Runtime.Presentation
 				BuildList(breeds);
 				_view.ShowList();
 			}
-			catch (OperationCanceledException)
-			{
-				// ok
-			}
+			catch (OperationCanceledException) { }
 			catch (Exception)
 			{
 				ClearList();
@@ -136,21 +139,18 @@ namespace Features.Facts.Runtime.Presentation
 
 		private void RequestBreedDetails(string breedId, string breedName, DogBreedItemView itemView)
 		{
-			// Игнор: повторный клик по тому же элементу, который уже грузится
 			if (_loadingItem != null && ReferenceEquals(_loadingItem, itemView))
+			{
 				return;
+			}
 
-			// отменяем предыдущий details запрос (если исполняется/в очереди)
 			_queue.CancelOwner(_detailsOwnerTag);
 
-			// выключаем спиннер у предыдущего item (если был)
 			SetLoadingItem(null);
 
-			// новый ownerTag для этого клика
 			var ownerTag = new object();
 			_detailsOwnerTag = ownerTag;
 
-			// включаем спиннер для текущего item
 			SetLoadingItem(itemView);
 
 			_view.Popup?.Hide();
@@ -166,29 +166,36 @@ namespace Features.Facts.Runtime.Presentation
 					token => _api.FetchBreedDetailsAsync(breedId, token),
 					ownerTag: ownerTag);
 
-				// запрос мог устареть (если успели кликнуть другую породу)
 				if (!ReferenceEquals(_detailsOwnerTag, ownerTag))
+				{
 					return;
+				}
 
-				// выключаем спиннер именно у активного item
 				if (ReferenceEquals(_loadingItem, itemView))
+				{
 					SetLoadingItem(null);
+				}
 
 				_view.Popup?.Show(details.Name, details.Description);
 			}
 			catch (OperationCanceledException)
 			{
-				// если отменили именно этот запрос — убираем спиннер
 				if (ReferenceEquals(_detailsOwnerTag, ownerTag) && ReferenceEquals(_loadingItem, itemView))
+				{
 					SetLoadingItem(null);
+				}
 			}
 			catch (Exception)
 			{
 				if (!ReferenceEquals(_detailsOwnerTag, ownerTag))
+				{
 					return;
+				}
 
 				if (ReferenceEquals(_loadingItem, itemView))
+				{
 					SetLoadingItem(null);
+				}
 
 				_view.Popup?.Show(breedName, "Ошибка загрузки описания породы");
 			}
@@ -197,22 +204,30 @@ namespace Features.Facts.Runtime.Presentation
 		private void SetLoadingItem(DogBreedItemView next)
 		{
 			if (_loadingItem != null)
+			{
 				_loadingItem.SetLoading(false);
+			}
 
 			_loadingItem = next;
 
 			if (_loadingItem != null)
+			{
 				_loadingItem.SetLoading(true);
+			}
 		}
 
 		private void ClearList()
 		{
 			for (int i = 0; i < _itemSubscriptions.Count; i++)
+			{
 				_itemSubscriptions[i]?.Dispose();
+			}
 			_itemSubscriptions.Clear();
 
 			for (int i = 0; i < _spawnedItems.Count; i++)
+			{
 				_itemPool.Despawn(_spawnedItems[i]);
+			}
 			_spawnedItems.Clear();
 		}
 

@@ -1,8 +1,8 @@
 namespace Common.Runtime.Clicker
 {
 	using System;
-	using Common.Runtime.Currency;
-	using Common.Runtime.Energy;
+	using Currency;
+	using Energy;
 	using Features.Clicker.Runtime.Config;
 	using R3;
 	using Zenject;
@@ -15,9 +15,9 @@ namespace Common.Runtime.Clicker
 		private readonly ClickerTabConfig _config;
 
 		private readonly Subject<ClickerTapPerformed> _performed = new();
-		public Observable<ClickerTapPerformed> TapPerformed => _performed;
-
 		private readonly CompositeDisposable _d = new();
+
+		public Observable<ClickerTapPerformed> TapPerformed => _performed;
 
 		public ClickerTapProcessor(
 			IClickerTapBus bus,
@@ -43,7 +43,9 @@ namespace Common.Runtime.Clicker
 							: _config.AutoTapCurrency;
 
 						if (reward > 0)
+						{
 							_wallet.Add(reward);
+						}
 
 						_performed.OnNext(new ClickerTapPerformed(req.Source, req.WorldPos));
 					}

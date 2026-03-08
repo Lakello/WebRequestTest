@@ -20,7 +20,9 @@ namespace Common.Runtime.UI
 		private void OnEnable()
 		{
 			if (_target == null)
+			{
 				_target = transform as RectTransform;
+			}
 
 			StartTween();
 		}
@@ -39,14 +41,20 @@ namespace Common.Runtime.UI
 		{
 			StopTween(resetRotation: false);
 
-			if (_target == null) return;
-			if (_secondsPerRevolution <= 0f) _secondsPerRevolution = 1f;
+			if (_target == null)
+			{
+				return;
+			}
+			if (_secondsPerRevolution <= 0f)
+			{
+				_secondsPerRevolution = 1f;
+			}
 
 			_tween = _target
 				.DORotate(new Vector3(0f, 0f, -360f), _secondsPerRevolution, RotateMode.FastBeyond360)
 				.SetEase(Ease.Linear)
 				.SetLoops(-1, LoopType.Restart)
-				.SetUpdate(true); // крутится даже на паузе (как у тебя в табах)
+				.SetUpdate(true);
 		}
 
 		private void StopTween(bool resetRotation)
@@ -58,7 +66,9 @@ namespace Common.Runtime.UI
 			}
 
 			if (resetRotation && _target != null)
+			{
 				_target.localRotation = Quaternion.identity;
+			}
 		}
 	}
 }

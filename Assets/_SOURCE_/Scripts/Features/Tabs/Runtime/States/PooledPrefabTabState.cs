@@ -10,8 +10,6 @@ namespace Features.Tabs.Runtime.States
 
 	public sealed class PooledPrefabTabState : ITabState
 	{
-		public TabId Id { get; }
-
 		private readonly TabViewPool _pool;
 		private readonly Transform _parent;
 		private readonly float _duration;
@@ -26,13 +24,18 @@ namespace Features.Tabs.Runtime.States
 			_duration = duration;
 		}
 
+		public TabId Id { get; }
+
 		public UniTask EnterAsync(CancellationToken ct) => ShowAsync(ct);
 
 		public UniTask ExitAsync(CancellationToken ct) => HideAsync(ct);
 
 		private void EnsureInstance()
 		{
-			if (_instance != null) return;
+			if (_instance != null)
+			{
+				return;
+			}
 
 			_instance = _pool.Spawn();
 			_instance.transform.SetParent(_parent, false);
@@ -60,7 +63,10 @@ namespace Features.Tabs.Runtime.States
 
 		private async UniTask HideAsync(CancellationToken ct)
 		{
-			if (_instance == null) return;
+			if (_instance == null)
+			{
+				return;
+			}
 
 			var group = _instance.CanvasGroup;
 			group.interactable = false;
@@ -70,7 +76,6 @@ namespace Features.Tabs.Runtime.States
 				.SetUpdate(true)
 				.ToUniTask(cancellationToken: ct);
 
-			// Состояние сохранять не нужно -> возвращаем в пул
 			_pool.Despawn(_instance);
 			_instance = null;
 		}

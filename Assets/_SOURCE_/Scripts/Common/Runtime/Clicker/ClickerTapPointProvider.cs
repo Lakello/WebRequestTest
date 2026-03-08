@@ -11,7 +11,9 @@ namespace Common.Runtime.Clicker
 		public void ClearClickButtonRect(RectTransform rect)
 		{
 			if (_clickButtonRect == rect)
+			{
 				_clickButtonRect = null;
+			}
 		}
 
 		public bool TryGetRandomPointInClickButton(out Vector3 worldPos)

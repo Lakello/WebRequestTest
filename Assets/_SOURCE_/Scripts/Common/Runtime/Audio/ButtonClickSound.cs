@@ -23,10 +23,14 @@ namespace Common.Runtime.Audio
 		private void Awake()
 		{
 			if (_button == null)
+			{
 				_button = GetComponent<Button>();
+			}
 
 			if (_audioSource == null)
+			{
 				_audioSource = GetComponent<AudioSource>();
+			}
 
 			if (_button == null)
 			{
@@ -48,14 +52,18 @@ namespace Common.Runtime.Audio
 		private void OnDestroy()
 		{
 			if (_button != null)
+			{
 				_button.onClick.RemoveListener(Play);
+			}
 		}
 
 		private void Play()
 		{
-			if (_clip == null) return;
+			if (_clip == null)
+			{
+				return;
+			}
 
-			// чтобы не перебивать текущий клик — PlayOneShot
 			_audioSource.PlayOneShot(_clip, _volume);
 		}
 	}

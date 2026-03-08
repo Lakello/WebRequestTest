@@ -14,24 +14,38 @@ namespace Features.Facts.Runtime.Views
 		private void Awake()
 		{
 			if (_closeButton != null)
+			{
 				_closeButton.onClick.AddListener(Hide);
+			}
 
 			Hide();
 		}
 
 		public void Show(string title, string description)
 		{
-			if (_title != null) _title.text = title;
-			if (_description != null) _description.text = description;
+			if (_title != null)
+			{
+				_title.text = title;
+			}
+			if (_description != null)
+			{
+				_description.text = description;
+			}
 
-			if (_root != null) _root.SetActive(true);
-			
+			if (_root != null)
+			{
+				_root.SetActive(true);
+			}
+
 			LayoutRebuilder.ForceRebuildLayoutImmediate(_root.transform as RectTransform);
 		}
 
 		public void Hide()
 		{
-			if (_root != null) _root.SetActive(false);
+			if (_root != null)
+			{
+				_root.SetActive(false);
+			}
 		}
 	}
 }

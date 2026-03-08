@@ -36,7 +36,6 @@ namespace Common.Runtime.Clicker
 			{
 				var seconds = _config.AutoTapIntervalSeconds;
 
-				// если 0 — фактически выключаем автоклик, чтобы не спамить в 0-delay loop
 				if (seconds <= 0f)
 				{
 					await UniTask.Delay(TimeSpan.FromSeconds(0.25f), cancellationToken: ct);
@@ -44,10 +43,15 @@ namespace Common.Runtime.Clicker
 				}
 
 				await UniTask.Delay(TimeSpan.FromSeconds(seconds), cancellationToken: ct);
-				if (ct.IsCancellationRequested) break;
+				if (ct.IsCancellationRequested)
+				{
+					break;
+				}
 
 				var hasPoint = _pointProvider.TryGetRandomPointInClickButton(out var worldPos);
-				_bus.RequestTap(new ClickerTapRequest(ClickerTapSource.Auto, hasPoint ? worldPos : default));
+				_bus.RequestTap(new ClickerTapRequest(ClickerTapSource.Auto, hasPoint
+					? worldPos
+					: default));
 			}
 		}
 
