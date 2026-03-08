@@ -6,6 +6,7 @@ namespace Features.Tabs.Runtime.Installers
 	using Common.Runtime.Currency;
 	using Common.Runtime.Energy;
 	using Common.Runtime.Navigation;
+	using Common.Runtime.Networking;
 	using EntryPoints;
 	using Pooling;
 	using Presentation;
@@ -29,6 +30,8 @@ namespace Features.Tabs.Runtime.Installers
 
 		public override void InstallBindings()
 		{
+			Container.BindInterfacesAndSelfTo<RequestQueue>().AsSingle().NonLazy();
+			
 			Container.BindInstance(_clickerTabConfig).AsSingle();
 			Container.Bind<TabsView>().FromInstance(_tabsView).AsSingle();
 
