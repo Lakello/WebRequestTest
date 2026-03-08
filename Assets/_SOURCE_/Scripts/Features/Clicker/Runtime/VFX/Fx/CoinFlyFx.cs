@@ -1,4 +1,4 @@
-namespace Features.Clicker.Runtime.VFX
+namespace Features.Clicker.Runtime.VFX.Fx
 {
 	using UnityEngine;
 	using UnityEngine.UI;

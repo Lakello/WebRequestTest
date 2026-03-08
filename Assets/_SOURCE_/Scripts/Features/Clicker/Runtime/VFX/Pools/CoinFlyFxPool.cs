@@ -1,5 +1,6 @@
-namespace Features.Clicker.Runtime.VFX
+namespace Features.Clicker.Runtime.VFX.Pools
 {
+	using Fx;
 	using Zenject;
 
 	public sealed class CoinFlyFxPool : MonoMemoryPool<CoinFlyFx>

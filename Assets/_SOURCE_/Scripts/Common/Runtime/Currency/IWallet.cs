@@ -5,6 +5,7 @@ namespace Common.Runtime.Currency
 	public interface IWallet
 	{
 		ReadOnlyReactiveProperty<long> Balance { get; }
+
 		void Add(long amount);
 	}
 }

@@ -5,6 +5,7 @@ namespace Common.Runtime.Clicker
 	public interface IClickerTapBus
 	{
 		Observable<ClickerTapRequest> TapRequested { get; }
+
 		void RequestTap(ClickerTapRequest request);
 	}
 }

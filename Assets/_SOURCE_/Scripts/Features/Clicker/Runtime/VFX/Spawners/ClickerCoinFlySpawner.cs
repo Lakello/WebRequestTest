@@ -1,12 +1,15 @@
-namespace Features.Clicker.Runtime.VFX
+namespace Features.Clicker.Runtime.VFX.Spawners
 {
 	using System;
 	using Common.Runtime.Clicker;
 	using Cysharp.Threading.Tasks;
 	using DG.Tweening;
+	using Pools;
 	using R3;
+	using Settings;
 	using UnityEngine;
 	using Views;
+	using Random = UnityEngine.Random;
 
 	public sealed class ClickerCoinFlySpawner : IDisposable
 	{
@@ -46,8 +49,8 @@ namespace Features.Clicker.Runtime.VFX
 
 			var end = GetRectCenterWorld(_view.CoinsTargetRect);
 
-			var duration = UnityEngine.Random.Range(_settings.DurationMin, _settings.DurationMax);
-			var amplitude = UnityEngine.Random.Range(_settings.CurveAmplitudeMin, _settings.CurveAmplitudeMax);
+			var duration = Random.Range(_settings.DurationMin, _settings.DurationMax);
+			var amplitude = Random.Range(_settings.CurveAmplitudeMin, _settings.CurveAmplitudeMax);
 			var curve = _settings.Curve;
 
 			var coin = _coinPool.Spawn();

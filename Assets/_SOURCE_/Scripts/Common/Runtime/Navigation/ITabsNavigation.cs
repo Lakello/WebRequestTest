@@ -5,7 +5,8 @@ namespace Common.Runtime.Navigation
 	public interface ITabsNavigation
 	{
 		TabId Current { get; }
-		TabId? TransitionTarget { get; }   // если идёт переход
+		TabId? TransitionTarget { get; } // если идёт переход
+
 		UniTask SwitchToAsync(TabId tabId);
 	}
 }

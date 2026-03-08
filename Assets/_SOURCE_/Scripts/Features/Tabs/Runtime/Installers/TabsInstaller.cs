@@ -56,8 +56,8 @@ namespace Features.Tabs.Runtime.Installers
 
 			Container.BindInterfacesAndSelfTo<TabsPresenter>().AsSingle();
 			Container.BindInterfacesAndSelfTo<TabsEntryPoint>().AsSingle();
-			
-			Container.BindInterfacesAndSelfTo<ClickerTapPointProvider>().AsSingle();
+
+			Container.BindInterfacesTo<ClickerTapPointProvider>().AsSingle();
 		}
 
 		private void BindTab(TabId id, TabPrefabRoot prefab)

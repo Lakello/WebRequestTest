@@ -27,6 +27,7 @@ namespace Features.Tabs.Runtime.States
 		}
 
 		public UniTask EnterAsync(CancellationToken ct) => ShowAsync(ct);
+
 		public UniTask ExitAsync(CancellationToken ct) => HideAsync(ct);
 
 		private void EnsureInstance()

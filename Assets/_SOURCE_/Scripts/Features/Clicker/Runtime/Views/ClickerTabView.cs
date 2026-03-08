@@ -20,6 +20,7 @@ namespace Features.Clicker.Runtime.Views
 		public Observable<Vector3> TapWorldPositions => _tapInput.TapWorldPositions;
 
 		public void SetBalance(long value) => _balanceText.text = value.ToString();
+
 		public void SetEnergy(int current, int max) => _energyText.text = $"{current}/{max}";
 	}
 }

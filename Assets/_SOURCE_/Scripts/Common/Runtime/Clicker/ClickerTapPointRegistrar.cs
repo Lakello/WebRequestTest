@@ -6,7 +6,7 @@ namespace Common.Runtime.Clicker
 
 	public sealed class ClickerTapPointRegistrar : MonoBehaviour
 	{
-		[Inject] private ClickerTapPointProvider _provider;
+		[Inject] private IClickerTapPointRegistry _registry;
 		[Inject] private ClickerTabView _view;
 
 		private RectTransform _rect;
@@ -18,12 +18,12 @@ namespace Common.Runtime.Clicker
 
 		private void OnEnable()
 		{
-			_provider.SetClickButtonRect(_rect);
+			_registry.SetClickButtonRect(_rect);
 		}
 
 		private void OnDisable()
 		{
-			_provider.ClearClickButtonRect(_rect);
+			_registry.ClearClickButtonRect(_rect);
 		}
 	}
 }

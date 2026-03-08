@@ -2,7 +2,10 @@ namespace Features.Clicker.Runtime.Installers
 {
 	using Presentation;
 	using UnityEngine;
-	using VFX;
+	using VFX.Fx;
+	using VFX.Pools;
+	using VFX.Settings;
+	using VFX.Spawners;
 	using Views;
 	using Zenject;
 

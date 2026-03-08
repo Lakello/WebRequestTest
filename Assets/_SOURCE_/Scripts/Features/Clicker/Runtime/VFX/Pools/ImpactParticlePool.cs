@@ -1,10 +1,12 @@
-namespace Features.Clicker.Runtime.VFX
+namespace Features.Clicker.Runtime.VFX.Pools
 {
+	using Fx;
 	using Zenject;
 
-	public sealed class TapParticlePool : MonoMemoryPool<ClickerTapParticleFx>
+	public sealed class ImpactParticlePool : MonoMemoryPool<ClickerTapParticleFx>
 	{
 		protected override void OnSpawned(ClickerTapParticleFx item) => item.gameObject.SetActive(true);
+
 		protected override void OnDespawned(ClickerTapParticleFx item) => item.gameObject.SetActive(false);
 	}
 }

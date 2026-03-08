@@ -33,7 +33,9 @@ namespace Common.Runtime.Clicker
 				if (ct.IsCancellationRequested) break;
 
 				var hasPoint = _pointProvider.TryGetRandomPointInClickButton(out var worldPos);
-				_bus.RequestTap(new ClickerTapRequest(ClickerTapSource.Auto, hasPoint ? worldPos : default));
+				_bus.RequestTap(new ClickerTapRequest(ClickerTapSource.Auto, hasPoint
+					? worldPos
+					: default));
 			}
 		}
 

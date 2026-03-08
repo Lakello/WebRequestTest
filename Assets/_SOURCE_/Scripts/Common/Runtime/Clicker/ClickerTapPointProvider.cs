@@ -2,11 +2,12 @@ namespace Common.Runtime.Clicker
 {
 	using UnityEngine;
 
-	public sealed class ClickerTapPointProvider : IClickerTapPointProvider
+	public sealed class ClickerTapPointProvider : IClickerTapPointProvider, IClickerTapPointRegistry
 	{
 		private RectTransform _clickButtonRect;
 
 		public void SetClickButtonRect(RectTransform rect) => _clickButtonRect = rect;
+
 		public void ClearClickButtonRect(RectTransform rect)
 		{
 			if (_clickButtonRect == rect)

@@ -1,8 +1,9 @@
-namespace Features.Clicker.Runtime.VFX
+namespace Features.Clicker.Runtime.VFX.Settings
 {
+	using System;
 	using UnityEngine;
 
-	[System.Serializable]
+	[Serializable]
 	public sealed class ClickerCoinFlySettings
 	{
 		[Header("Duration (seconds)")]

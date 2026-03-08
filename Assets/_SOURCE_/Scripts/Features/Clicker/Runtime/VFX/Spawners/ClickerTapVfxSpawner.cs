@@ -1,8 +1,9 @@
-namespace Features.Clicker.Runtime.VFX
+namespace Features.Clicker.Runtime.VFX.Spawners
 {
 	using System;
 	using Common.Runtime.Clicker;
 	using Cysharp.Threading.Tasks;
+	using Pools;
 	using R3;
 	using UnityEngine;
 
