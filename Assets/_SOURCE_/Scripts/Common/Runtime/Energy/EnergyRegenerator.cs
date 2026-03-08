@@ -1,21 +1,22 @@
-namespace _SOURCE_.Scripts.Common.Runtime.Currency
+namespace _SOURCE_.Scripts.Common.Runtime.Energy
 {
 	using System;
 	using System.Threading;
 	using Cysharp.Threading.Tasks;
 	using Zenject;
 
-	public sealed class AutoCurrencyCollector : IInitializable, IDisposable
+	public sealed class EnergyRegenerator : IInitializable, IDisposable
 	{
-		private readonly IWallet _wallet;
+		private readonly IEnergy _energy;
+
+		private readonly TimeSpan _interval = TimeSpan.FromSeconds(10);
+		private const int RegenAmount = 10;
+
 		private CancellationTokenSource _cts;
 
-		// позже можно вынести в конфиг/настройку
-		private readonly TimeSpan _interval = TimeSpan.FromSeconds(3);
-
-		public AutoCurrencyCollector(IWallet wallet)
+		public EnergyRegenerator(IEnergy energy)
 		{
-			_wallet = wallet;
+			_energy = energy;
 		}
 
 		public void Initialize()
@@ -31,7 +32,7 @@ namespace _SOURCE_.Scripts.Common.Runtime.Currency
 				await UniTask.Delay(_interval, cancellationToken: ct);
 				if (ct.IsCancellationRequested) break;
 
-				_wallet.Add(1);
+				_energy.Add(RegenAmount);
 			}
 		}
 

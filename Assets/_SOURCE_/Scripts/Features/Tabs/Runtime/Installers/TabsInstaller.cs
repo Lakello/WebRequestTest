@@ -1,7 +1,9 @@
 namespace _SOURCE_.Scripts
 {
 	using System.Collections.Generic;
+	using Common.Runtime.Clicker;
 	using Common.Runtime.Currency;
+	using Common.Runtime.Energy;
 	using UnityEngine;
 	using Zenject;
 
@@ -22,8 +24,18 @@ namespace _SOURCE_.Scripts
 			Container.Bind<TabsView>().FromInstance(_tabsView).AsSingle();
 
 			Container.Bind<IWallet>().To<Wallet>().AsSingle().NonLazy();
-			Container.BindInterfacesTo<AutoCurrencyCollector>().AsSingle().NonLazy();
-			
+
+			// Energy (max=1000, start=max)
+			Container.Bind<IEnergy>().FromMethod(_ => new Energy(max: 1000, startValue: 1000)).AsSingle().NonLazy();
+			Container.BindInterfacesTo<EnergyRegenerator>().AsSingle().NonLazy();
+
+// Click bus + processor
+			Container.Bind<IClickerTapBus>().To<ClickerTapBus>().AsSingle().NonLazy();
+			Container.BindInterfacesAndSelfTo<ClickerTapProcessor>().AsSingle().NonLazy(); // даёт IClickerTapFeedback тоже
+
+// Auto taps
+			Container.BindInterfacesTo<AutoTapGenerator>().AsSingle().NonLazy();
+
 			BindTab(TabId.Clicker, _clickerPrefab);
 			BindTab(TabId.Weather, _weatherPrefab);
 			BindTab(TabId.Facts, _factsPrefab);
