@@ -3,20 +3,20 @@ namespace Common.Runtime.Energy
 	using System;
 	using System.Threading;
 	using Cysharp.Threading.Tasks;
+	using Features.Clicker.Runtime.Config;
 	using Zenject;
 
 	public sealed class EnergyRegenerator : IInitializable, IDisposable
 	{
 		private readonly IEnergy _energy;
-
-		private readonly TimeSpan _interval = TimeSpan.FromSeconds(10);
-		private const int RegenAmount = 10;
+		private readonly ClickerTabConfig _config;
 
 		private CancellationTokenSource _cts;
 
-		public EnergyRegenerator(IEnergy energy)
+		public EnergyRegenerator(IEnergy energy, ClickerTabConfig config)
 		{
 			_energy = energy;
+			_config = config;
 		}
 
 		public void Initialize()
@@ -29,10 +29,19 @@ namespace Common.Runtime.Energy
 		{
 			while (!ct.IsCancellationRequested)
 			{
-				await UniTask.Delay(_interval, cancellationToken: ct);
+				var seconds = _config.EnergyRegenIntervalSeconds;
+
+				// если 0 — выключаем реген, чтобы не уйти в спам-цикл
+				if (seconds <= 0f || _config.EnergyRegenAmount <= 0)
+				{
+					await UniTask.Delay(TimeSpan.FromSeconds(0.25f), cancellationToken: ct);
+					continue;
+				}
+
+				await UniTask.Delay(TimeSpan.FromSeconds(seconds), cancellationToken: ct);
 				if (ct.IsCancellationRequested) break;
 
-				_energy.Add(RegenAmount);
+				_energy.Add(_config.EnergyRegenAmount);
 			}
 		}
 

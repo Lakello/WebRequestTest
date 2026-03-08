@@ -1,6 +1,7 @@
 namespace Features.Tabs.Runtime.Installers
 {
 	using System.Collections.Generic;
+	using Clicker.Runtime.Config;
 	using Common.Runtime.Clicker;
 	using Common.Runtime.Currency;
 	using Common.Runtime.Energy;
@@ -15,6 +16,7 @@ namespace Features.Tabs.Runtime.Installers
 
 	public sealed class TabsInstaller : MonoInstaller
 	{
+		[SerializeField] private ClickerTabConfig _clickerTabConfig;
 		[SerializeField] private TabsView _tabsView;
 
 		[Header("Tabs Container (under Canvas)")]
@@ -27,12 +29,20 @@ namespace Features.Tabs.Runtime.Installers
 
 		public override void InstallBindings()
 		{
+			Container.BindInstance(_clickerTabConfig).AsSingle();
 			Container.Bind<TabsView>().FromInstance(_tabsView).AsSingle();
 
 			Container.Bind<IWallet>().To<Wallet>().AsSingle().NonLazy();
 
 			// Energy (max=1000, start=max)
-			Container.Bind<IEnergy>().FromMethod(_ => new Energy(max: 1000, startValue: 1000)).AsSingle().NonLazy();
+			Container.Bind<IEnergy>()
+				.FromMethod(ctx =>
+				{
+					var cfg = ctx.Container.Resolve<ClickerTabConfig>();
+					return new Energy(max: cfg.EnergyMax, startValue: cfg.GetEnergyStartOrMax());
+				})
+				.AsSingle()
+				.NonLazy();
 			Container.BindInterfacesTo<EnergyRegenerator>().AsSingle().NonLazy();
 
 // Click bus + processor
